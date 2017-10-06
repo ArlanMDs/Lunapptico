@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    tools:context="br.com.gerqs.lunapptico.activities.AprenderPalavras"
+    tools:layout_editor_absoluteY="0dp"
+    tools:layout_editor_absoluteX="0dp">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout5"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:padding="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.973"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <Button
+            android:id="@+id/buttonMainNivel1"
+            android:layout_width="300dp"
+            android:layout_height="75dp"
+            android:layout_margin="5dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/retanglebutton"
+            android:padding="5dp"
+            android:text="Nível 1"
+            app:layout_constraintBottom_toTopOf="@+id/buttonMainNivel2"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.023" />
+
+        <ImageView
+            android:id="@+id/imageView8"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="1dp"
+            android:elevation="6dp"
+            app:layout_constraintBottom_toBottomOf="@+id/buttonMainNivel1"
+            app:layout_constraintHorizontal_bias="0.137"
+            app:layout_constraintLeft_toLeftOf="@+id/buttonMainNivel1"
+            app:layout_constraintRight_toRightOf="@+id/buttonMainNivel1"
+            app:layout_constraintTop_toTopOf="@+id/buttonMainNivel1"
+            app:layout_constraintVertical_bias="0.409"
+            app:srcCompat="@drawable/stars1" />
+
+        <Button
+            android:id="@+id/buttonMainNivel2"
+            android:layout_width="300dp"
+            android:layout_height="75dp"
+            android:layout_margin="5dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/retanglebutton"
+            android:padding="5dp"
+            android:text="Nível 2"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.466"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.187" />
+
+        <ImageView
+            android:id="@+id/imageView9"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="1dp"
+            android:elevation="6dp"
+            app:layout_constraintBottom_toBottomOf="@+id/buttonMainNivel2"
+            app:layout_constraintEnd_toEndOf="@+id/buttonMainNivel2"
+            app:layout_constraintHorizontal_bias="0.129"
+            app:layout_constraintStart_toStartOf="@+id/buttonMainNivel2"
+            app:layout_constraintTop_toTopOf="@+id/buttonMainNivel2"
+            app:layout_constraintVertical_bias="0.466"
+            app:srcCompat="@drawable/stars2" />
+
+        <Button
+            android:id="@+id/buttonMainNivel3"
+            android:layout_width="300dp"
+            android:layout_height="75dp"
+            android:layout_margin="5dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/retanglebutton"
+            android:padding="5dp"
+            android:text="Nível 3"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.4"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.393" />
+
+        <ImageView
+            android:id="@+id/imageView10"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="1dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:elevation="6dp"
+            app:layout_constraintBottom_toBottomOf="@+id/buttonMainNivel3"
+            app:layout_constraintHorizontal_bias="0.146"
+            app:layout_constraintLeft_toLeftOf="@+id/buttonMainNivel3"
+            app:layout_constraintRight_toRightOf="@+id/buttonMainNivel3"
+            app:layout_constraintTop_toTopOf="@+id/buttonMainNivel3"
+            app:srcCompat="@drawable/stars3" />
+
+        <Button
+            android:id="@+id/buttonAprenderVoltar"
+            android:layout_width="300dp"
+            android:layout_height="75dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/retanglebutton"
+            android:gravity="center"
+            android:paddingLeft="20dp"
+            android:text="Voltar"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.811" />
+
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="1dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/homepress"
+            android:elevation="10dp"
+            app:layout_constraintBottom_toBottomOf="@+id/buttonAprenderVoltar"
+            app:layout_constraintHorizontal_bias="0.151"
+            app:layout_constraintLeft_toLeftOf="@+id/buttonAprenderVoltar"
+            app:layout_constraintRight_toRightOf="@+id/buttonAprenderVoltar"
+            app:layout_constraintTop_toTopOf="@+id/buttonAprenderVoltar"
+            app:layout_constraintVertical_bias="0.421" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.constraint.ConstraintLayout>

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="br.com.gerqs.lunapptico.activities.Configuracoes">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout5"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <Button
+            android:id="@+id/buttonConfMusica"
+            android:layout_width="300dp"
+            android:layout_height="75dp"
+            android:background="@drawable/retanglebutton"
+            android:gravity="center"
+            android:paddingLeft="20dp"
+            android:text="Música"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.64" />
+
+        <ToggleButton
+            android:id="@+id/toggleConfMusica"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="8dp"
+            android:background="@drawable/togglemusic"
+            android:checked="true"
+            android:elevation="10dp"
+            android:text="ToggleButton"
+            android:textOff=""
+            android:textOn=""
+            app:layout_constraintBottom_toBottomOf="@+id/buttonConfMusica"
+            app:layout_constraintHorizontal_bias="0.908"
+            app:layout_constraintLeft_toLeftOf="@+id/buttonConfMusica"
+            app:layout_constraintRight_toRightOf="@+id/buttonConfMusica"
+            app:layout_constraintTop_toTopOf="@+id/buttonConfMusica"
+            app:layout_constraintVertical_bias="0.64" />
+
+        <Button
+            android:id="@+id/buttonConfEfeitosSonoros"
+            android:layout_width="300dp"
+            android:layout_height="75dp"
+            android:background="@drawable/retanglebutton"
+            android:gravity="center"
+            android:paddingLeft="20dp"
+            android:text="Efeitos Sonoros"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.186" />
+
+        <ToggleButton
+            android:id="@+id/toggleConfEfeitosSonoros"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/togglesoundeffects"
+            android:checked="true"
+            android:elevation="10dp"
+            android:text="ToggleButton"
+            android:textOff=""
+            android:textOn=""
+            app:layout_constraintBottom_toBottomOf="@+id/buttonConfEfeitosSonoros"
+            app:layout_constraintHorizontal_bias="0.916"
+            app:layout_constraintLeft_toLeftOf="@+id/buttonConfEfeitosSonoros"
+            app:layout_constraintRight_toRightOf="@+id/buttonConfEfeitosSonoros"
+            app:layout_constraintTop_toTopOf="@+id/buttonConfEfeitosSonoros"
+            app:layout_constraintVertical_bias="0.37" />
+
+        <Button
+            android:id="@+id/buttonConfNarrador"
+            android:layout_width="300dp"
+            android:layout_height="75dp"
+            android:layout_marginBottom="296dp"
+            android:background="@drawable/retanglebutton"
+            android:gravity="center"
+            android:paddingLeft="20dp"
+            android:text="Narrador"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
+
+        <ToggleButton
+            android:id="@+id/toggleConfNarrador"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/togglemic"
+            android:checked="true"
+            android:elevation="10dp"
+            android:text="ToggleButton"
+            android:textOff=""
+            android:textOn=""
+            app:layout_constraintBottom_toBottomOf="@+id/buttonConfNarrador"
+            app:layout_constraintHorizontal_bias="0.874"
+            app:layout_constraintLeft_toLeftOf="@+id/buttonConfNarrador"
+            app:layout_constraintRight_toRightOf="@+id/buttonConfNarrador"
+            app:layout_constraintTop_toTopOf="@+id/buttonConfNarrador"
+            app:layout_constraintVertical_bias="0.444" />
+
+        <Button
+            android:id="@+id/buttonConfVoltar"
+            android:layout_width="300dp"
+            android:layout_height="75dp"
+            android:background="@drawable/retanglebutton"
+            android:gravity="center"
+            android:paddingLeft="20dp"
+            android:text="Voltar"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
+
+        <Button
+            android:id="@+id/buttonConfHome"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/homepress"
+            android:elevation="10dp"
+            app:layout_constraintBottom_toBottomOf="@+id/buttonConfVoltar"
+            app:layout_constraintHorizontal_bias="0.868"
+            app:layout_constraintLeft_toLeftOf="@+id/buttonConfVoltar"
+            app:layout_constraintRight_toRightOf="@+id/buttonConfVoltar"
+            app:layout_constraintTop_toTopOf="@+id/buttonConfVoltar"
+            app:layout_constraintVertical_bias="0.36" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.constraint.ConstraintLayout>
