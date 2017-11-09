@@ -62,6 +62,7 @@ public class Nivel3 extends AppCompatActivity implements FragmentEscolhaCenario.
     private RoundCorners roundCorners;
     private SoundPlayer soundPlayer;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -416,9 +417,15 @@ public class Nivel3 extends AppCompatActivity implements FragmentEscolhaCenario.
 
         @Override
         public boolean onDrag(View v, DragEvent event) {
+            final View view = (View) event.getLocalState();
+            TextView dropped = (TextView) view;
+
             switch (event.getAction()) {
                 case DragEvent.ACTION_DRAG_STARTED:
-                    //no action necessary
+
+                    //reproduz o nome do animal
+                    reproduz(prefMic, prefSoundEffects, dropped.getText().toString());
+
                     break;
                 case DragEvent.ACTION_DRAG_ENTERED:
                     //no action necessary
@@ -429,19 +436,17 @@ public class Nivel3 extends AppCompatActivity implements FragmentEscolhaCenario.
                 case DragEvent.ACTION_DROP:
 
                     //handle the dragged view being dropped over a drop view
-                    final View view = (View) event.getLocalState();
+                    //final View view = (View) event.getLocalState();
                     //view dragged item is being dropped on
                     TextView dropTarget = (TextView) v;
                     //view being dragged and dropped
-                    TextView dropped = (TextView) view;
+
                     //checa se a string do dropTarget é igual ao do dropped
                     if(dropTarget.getText().toString().contains(dropped.getText().toString())){
                         //pontua
                         pontos += 10;
                         ViewPropertyAnimator.animate(dropTarget).cancel();
                         dropTarget.setAlpha(1);
-                        //reproduz o nome do animal no mediaplayer
-                        reproduz(prefMic, prefSoundEffects, dropped.getText().toString());
                         //stop displaying the view where it was before it was dragged
                         view.setVisibility(View.INVISIBLE);
                         //deixa o texto do drop visível
@@ -450,7 +455,7 @@ public class Nivel3 extends AppCompatActivity implements FragmentEscolhaCenario.
                         //if an item has already been dropped here, there will be a tag
                         Object tag = dropTarget.getTag();
                         //if there is already an item here, set it back visible in its original place
-                        if(tag!=null)
+                        if(tag != null)
                         {
                             //the tag is the view id already dropped here
                             int existingID = (Integer)tag;

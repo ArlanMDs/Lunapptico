@@ -1,12 +1,14 @@
 package br.com.gerqs.lunapptico.activities;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.ClipData;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
@@ -53,6 +55,7 @@ public class RotinaVestir extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void findViewsIds() {
         pessoa = (ImageView) findViewById(R.id.pessoa);
         camisaDrop = (ImageView) findViewById(R.id.camisa);
@@ -96,6 +99,7 @@ public class RotinaVestir extends AppCompatActivity implements View.OnClickListe
                 pessoa.setImageResource(R.drawable.garoto);
 
                 break;
+
             case R.id.buttonMenina:
                 resetViews();
                 pessoa.setImageResource(R.drawable.garota);
