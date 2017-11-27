@@ -6,7 +6,7 @@
         <item name="android:windowBackground">@drawable/fundo1</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/primary_material_light_1</item>
     </style>
 
 </resources>

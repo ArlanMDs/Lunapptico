@@ -1,6 +1,7 @@
 package br.com.gerqs.lunapptico.activities;
 
 import android.animation.ObjectAnimator;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -12,6 +13,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -41,8 +43,8 @@ import br.com.gerqs.lunapptico.soundManager.SoundPlayer;
 import br.com.gerqs.lunapptico.tools.RoundCorners;
 import br.com.gerqs.lunapptico.soundManager.SoundEffects;
 
-public class Nivel2 extends AppCompatActivity implements FragmentEscolhaCenario.InterfaceComunicao {
-    private Button button1, button2, button3, button4, buttonPontos, home;
+public class Nivel2 extends AppCompatActivity implements FragmentEscolhaCenario.InterfaceComunicao, View.OnClickListener {
+    private Button button1, button2, button3, button4, buttonPontos, home, play;
     private StringBuilder letrasDaPalavra;
     private ImageView imageView;
     private String alfabeto, palavra, cenario;
@@ -53,7 +55,7 @@ public class Nivel2 extends AppCompatActivity implements FragmentEscolhaCenario.
     private int mSounds[] = new int[3];
     private final static int ERRADO = 0, CERTO = 1, VICTORY = 2;
     private MediaPlayer mpBackgroundMusic;
-    private boolean soundEffects;
+    private boolean prefSoundEffects;
     private boolean prefMic;
     private boolean prefMusic;
     private boolean ultimaPalavra;
@@ -71,7 +73,6 @@ public class Nivel2 extends AppCompatActivity implements FragmentEscolhaCenario.
         //faz algumas inicializações
         inicializaVariaveis();
         //captura os botões
-        Button play = (Button) findViewById(R.id.playButton2);
         findViewsIds();
 
         //inicializa e anima switcher e buttons
@@ -87,7 +88,7 @@ public class Nivel2 extends AppCompatActivity implements FragmentEscolhaCenario.
 
         //busca preferência sobre efeitos sonoros
         final SharedPreferences mSharedPreference= PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        soundEffects = mSharedPreference.getBoolean("prefSoundEffects", true);  //default is true
+        prefSoundEffects = mSharedPreference.getBoolean("prefSoundEffects", true);  //default is true
         prefMic = (mSharedPreference.getBoolean("prefMic", true));
         prefMusic = (mSharedPreference.getBoolean("prefMusic", true));
 
@@ -95,109 +96,94 @@ public class Nivel2 extends AppCompatActivity implements FragmentEscolhaCenario.
         SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
         //boolean nivelEmAndamento = sharedPreferences.getBoolean("nivelEmAndamento", false);
 
-        if (sharedPreferences.getBoolean("nivelEmAndamento", false)) {
-            escondeFragmentEscolhaCenario();
-            loadPreferences();
-            //recupera os pontos
-            pontosSwitcher.setText(String.valueOf(pontos) + " ");
-            //inicia o jogo
-            proximaImagem();
-            sorteiaLetrasDosButtons();
-            mostraUI();
+        if (sharedPreferences.getBoolean("nivelEmAndamento", false))
+            continuarDialog();
+        else
+            restauraActivityParaEstadoInicial();
 
-        }else {
-            //Esconde o layout principal para mostrar o fragmento de escolha de cenário
-            escondeUI();
-            // Begin the transaction
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            // Replace the contents of the container with the new fragment
-            ft.replace(R.id.your_placeholder, new FragmentEscolhaCenario());
-            ft.commit();
-        }
+    }
 
+    private void findViewsIds() {
+        button1 = (Button)findViewById(R.id.Button);
+        button1.setOnClickListener(this);
+        button2 = (Button)findViewById(R.id.Button2);
+        button2.setOnClickListener(this);
+        button3 = (Button)findViewById(R.id.Button3);
+        button3.setOnClickListener(this);
+        button4 = (Button)findViewById(R.id.Button4);
+        button4.setOnClickListener(this);
+        buttonPontos = (Button)findViewById(R.id.buttonPontos);
+        buttonPontos.setOnClickListener(this);
+        home = (Button) findViewById(R.id.fase2Home);
+        home.setOnClickListener(this);
+        play = (Button) findViewById(R.id.playButton2);
+        play.setOnClickListener(this);
 
-        home.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                savePreferences();
-                Intent intent = new Intent(Nivel2.this, AprenderPalavras.class);
-                startActivity(intent);
+        imageView = (ImageView) findViewById(R.id.imageView);
+        fase2Content = (ConstraintLayout) findViewById(R.id.fase2Content);
+        estrelasLayout = (ConstraintLayout) findViewById(R.id.estrelasLayout);
+    }
 
-            }
-        });
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.Button:
 
-       button1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
                 //checar se acertou
                 if(escolheLetra(button1.getText().charAt(0))){
                     //acertou
                     button1.startAnimation(bounceAnim);
                     atualizaInterface();
                     pontua10();
-                    if(soundEffects) mSoundPool.playSound(mSounds[CERTO], 0.1f,0.1f);
+                    if(prefSoundEffects) mSoundPool.playSound(mSounds[CERTO], 0.1f,0.1f);
 
                 }else {
-                    if(soundEffects) mSoundPool.playSound(mSounds[ERRADO], 0.1f,0.1f);
+                    if(prefSoundEffects) mSoundPool.playSound(mSounds[ERRADO], 0.1f,0.1f);
                 }
 
-            }
-        });
+                break;
+            case R.id.Button2:
 
-        button2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //checar se acertou
                 if(escolheLetra(button2.getText().charAt(0))){
-                    //acertou
                     button2.startAnimation(bounceAnim);
                     atualizaInterface();
                     pontua10();
-                    if(soundEffects) mSoundPool.playSound(mSounds[CERTO], 0.1f,0.1f);
+                    if(prefSoundEffects) mSoundPool.playSound(mSounds[CERTO], 0.1f,0.1f);
 
                 }else {
-                    if(soundEffects) mSoundPool.playSound(mSounds[ERRADO], 0.1f,0.1f);
+                    if(prefSoundEffects) mSoundPool.playSound(mSounds[ERRADO], 0.1f,0.1f);
                 }
-            }
-        });
 
-        button3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //checar se acertou
+                break;
+            case R.id.Button3:
+
                 if(escolheLetra(button3.getText().charAt(0))){
-                    //acertou
                     button3.startAnimation(bounceAnim);
                     atualizaInterface();
                     pontua10();
-                    if(soundEffects) mSoundPool.playSound(mSounds[CERTO], 0.1f,0.1f);
+                    if(prefSoundEffects) mSoundPool.playSound(mSounds[CERTO], 0.1f,0.1f);
 
                 }else {
-                    if(soundEffects) mSoundPool.playSound(mSounds[ERRADO], 0.1f,0.1f);
+                    if(prefSoundEffects) mSoundPool.playSound(mSounds[ERRADO], 0.1f,0.1f);
                 }
-            }
-        });
 
-        button4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //checar se acertou
+                break;
+
+            case R.id.Button4:
+
                 if(escolheLetra(button4.getText().charAt(0))){
-                    //acertou
                     button4.startAnimation(bounceAnim);
                     atualizaInterface();
                     pontua10();
-                    if(soundEffects) mSoundPool.playSound(mSounds[CERTO], 0.1f,0.1f);
+                    if(prefSoundEffects) mSoundPool.playSound(mSounds[CERTO], 0.1f,0.1f);
 
                 }else {
-                    if(soundEffects) mSoundPool.playSound(mSounds[ERRADO], 0.1f,0.1f);
+                    if(prefSoundEffects) mSoundPool.playSound(mSounds[ERRADO], 0.1f,0.1f);
                 }
-            }
-        });
 
-        buttonPontos.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                break;
+            case R.id.buttonPontos:
+
                 resetPreferences();
                 if (mpBackgroundMusic != null){
                     mpBackgroundMusic.release();
@@ -208,17 +194,70 @@ public class Nivel2 extends AppCompatActivity implements FragmentEscolhaCenario.
                 intent.putExtra("bonus",bonus);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
-            }
-        });
-        //botão que diz o nome da imagem
-        play.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+
+                break;
+            case R.id.fase2Home:
+
+                savePreferences();
+                intent = new Intent(Nivel2.this, AprenderPalavras.class);
+                startActivity(intent);
+
+                break;
+            case R.id.playButton2:
+
                 String s = cards2.get(currentIndex);
                 s = s.replaceAll(".jpeg", "");
                 reproduz(true, true, s);
-            }
-        });
+
+                break;
+        }
+    }
+
+
+    private void continuarDialog() {
+
+        new AlertDialog.Builder(Nivel2.this)
+                .setMessage("Deseja continuar de onde parou?")
+                .setCancelable(false)
+                .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+
+                        escondeFragmentEscolhaCenario();
+                        loadPreferences();
+                        //recupera os pontos
+                        pontosSwitcher.setText(String.valueOf(pontos) + " ");
+                        //inicia o jogo
+                        proximaImagem();
+                        sorteiaLetrasDosButtons();
+                        mostraUI();
+
+                        dialog.cancel();
+
+                    }
+                })
+                .setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        restauraActivityParaEstadoInicial();
+                        dialog.cancel();
+                    }
+                }).show();
+    }
+
+    private void restauraActivityParaEstadoInicial(){
+        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("nivelEmAndamento", false);
+        editor.apply();
+
+        //Esconde o layout principal para mostrar o fragmento de escolha de cenário
+        escondeUI();
+        // Begin the transaction
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        // Replace the contents of the container with the new fragment
+        ft.replace(R.id.your_placeholder, new FragmentEscolhaCenario());
+        ft.commit();
     }
 
     private void inicializaVariaveis() {
@@ -227,18 +266,6 @@ public class Nivel2 extends AppCompatActivity implements FragmentEscolhaCenario.
         roundCorners = new RoundCorners(Nivel2.this, getResources());
         in = AnimationUtils.loadAnimation(this, android.R.anim.slide_in_left);
 
-    }
-
-    private void findViewsIds() {
-        button1 = (Button)findViewById(R.id.Button);
-        button2 = (Button)findViewById(R.id.Button2);
-        button3 = (Button)findViewById(R.id.Button3);
-        button4 = (Button)findViewById(R.id.Button4);
-        buttonPontos = (Button)findViewById(R.id.buttonPontos);
-        home = (Button) findViewById(R.id.fase2Home);
-        imageView = (ImageView) findViewById(R.id.imageView);
-        fase2Content = (ConstraintLayout) findViewById(R.id.fase2Content);
-        estrelasLayout = (ConstraintLayout) findViewById(R.id.estrelasLayout);
     }
 
     private void reproduz(boolean nome, boolean som, final String nomeDoArquivo) {
@@ -343,7 +370,7 @@ public class Nivel2 extends AppCompatActivity implements FragmentEscolhaCenario.
 
     /**
      * cria e insere animações nos botões
-     * @param b
+     * @param b boolean
      */
     private void animaBotoes(boolean b) {
         if(b) {
@@ -614,7 +641,7 @@ public class Nivel2 extends AppCompatActivity implements FragmentEscolhaCenario.
         //mostra os botões
         fadeAnim.reverse();
         mostraBotoes(true);
-        clickable(true);
+        setButtonsClicaveis(true);
         home.setVisibility(View.VISIBLE);
 
     }
@@ -632,7 +659,7 @@ public class Nivel2 extends AppCompatActivity implements FragmentEscolhaCenario.
             //randomizar letras dos botoes novamente
             sorteiaLetrasDosButtons();
         }else{
-            clickable(false);//evitar que os botões sejam apertados depois que terminar a palavra
+            setButtonsClicaveis(false);//evitar que os botões sejam apertados depois que terminar a palavra
             fadeAnim.setDuration(500);
             fadeAnim.start();
             home.setVisibility(View.INVISIBLE);//evitar que salve durante o evento de som
@@ -640,11 +667,15 @@ public class Nivel2 extends AppCompatActivity implements FragmentEscolhaCenario.
             letraAtual++;
             atualizaTextView();
 
+            String s = cards2.get(currentIndex);
+            s = s.replaceAll(".jpeg", "");
+            reproduz(prefMic, prefSoundEffects, s);
+
             //pausa antes de iniciar novas imagens
-            new CountDownTimer(1000, 1000) {
+            new CountDownTimer(4000, 1000) {
                 public void onTick(long millisUntilFinished) {}
                 public void onFinish() {
-                    if(soundEffects) mSoundPool.playSound(mSounds[VICTORY], 0.1f,0.1f);
+                    if(prefSoundEffects) mSoundPool.playSound(mSounds[VICTORY], 0.1f,0.1f);
                     //incremento no array de imagens
                     eventoDoFimDaPalavra();
                 }
@@ -697,7 +728,7 @@ public class Nivel2 extends AppCompatActivity implements FragmentEscolhaCenario.
         }
     }
 
-    private void clickable(boolean b){
+    private void setButtonsClicaveis(boolean b){
         if (b) {
             button1.setClickable(true);
             button2.setClickable(true);

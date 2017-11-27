@@ -4,6 +4,7 @@ import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
 
 import android.annotation.SuppressLint;
 import android.content.ClipData;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
@@ -14,6 +15,7 @@ import android.preference.PreferenceManager;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -61,6 +63,7 @@ public class Nivel3 extends AppCompatActivity implements FragmentEscolhaCenario.
     private String cenario;
     private RoundCorners roundCorners;
     private SoundPlayer soundPlayer;
+    private Button home;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -69,7 +72,6 @@ public class Nivel3 extends AppCompatActivity implements FragmentEscolhaCenario.
         setContentView(R.layout.activity_fase3);
 
         //início das capturas
-        Button home = (Button)findViewById(R.id.fase3Home);
         findViewsIds();
 
         //busca preferência sobre efeitos sonoros
@@ -78,6 +80,8 @@ public class Nivel3 extends AppCompatActivity implements FragmentEscolhaCenario.
         prefMic = (mSharedPreference.getBoolean("prefMic", true));
         prefMusic = (mSharedPreference.getBoolean("prefMusic", true));
 
+        //mais tempo é necessário se o narrador e efeitos sonoros estiverem ativos,
+        //para não passar para as próximas imagens enquanto algum som está sendo executado
         tempoDeEsperaParaProximasImagens = 1000;
         if(prefSoundEffects) tempoDeEsperaParaProximasImagens += 1500;
         if(prefMic) tempoDeEsperaParaProximasImagens += 1000;
@@ -86,36 +90,14 @@ public class Nivel3 extends AppCompatActivity implements FragmentEscolhaCenario.
         SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
         boolean nivelEmAndamento = sharedPreferences.getBoolean("nivelEmAndamento", false);
         exibeTutorial = !nivelEmAndamento;
-        if (nivelEmAndamento){
-            loadPreferences();
-            escondeFragmentEscolhaCenario();
-            proximasImagens();
-            mostraUI();
-        }else {
-            //Esconde o layout principal para a escolha do cenário
-            escondeUI();
-            bonus = 100;
-            //a flag serve de sinal para quando as 3 palavras forem arrastadas corretamente
-            flag = 0;
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            // Replace the contents of the container with the new fragment
-            FragmentEscolhaCenario fragmentEscolhaCenario = new FragmentEscolhaCenario();
-            ft.replace(R.id.your_placeholder, fragmentEscolhaCenario);
-            ft.commit();
-        }
+
+        if (nivelEmAndamento)
+            continuarDialog();
+        else
+            restauraActivityParaEstadoInicial();
 
         //início do player de efeitos sonoros
         setup();
-
-        //início dos drags
-        drag1.setOnTouchListener(new ChoiceTouchListener());
-        drag2.setOnTouchListener(new ChoiceTouchListener());
-        drag3.setOnTouchListener(new ChoiceTouchListener());
-
-        //início dos drops
-        drop1.setOnDragListener(new ChoiceDragListener());
-        drop2.setOnDragListener(new ChoiceDragListener());
-        drop3.setOnDragListener(new ChoiceDragListener());
 
         //início do timer do bonus
         mTextField = (TextView)findViewById(R.id.mTextField);
@@ -142,6 +124,53 @@ public class Nivel3 extends AppCompatActivity implements FragmentEscolhaCenario.
 
     }
 
+    private void continuarDialog() {
+
+        new AlertDialog.Builder(Nivel3.this)
+                .setMessage("Deseja continuar de onde parou?")
+                .setCancelable(false)
+                .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+
+                        loadPreferences();
+                        escondeFragmentEscolhaCenario();
+                        proximasImagens();
+                        mostraUI();
+
+                        dialog.cancel();
+
+                    }
+                })
+                .setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        exibeTutorial = true;
+                        restauraActivityParaEstadoInicial();
+                        dialog.cancel();
+                    }
+                }).show();
+    }
+
+    private void restauraActivityParaEstadoInicial(){
+        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("nivelEmAndamento", false);
+        editor.apply();
+
+        //Esconde o layout principal para a escolha do cenário
+        escondeUI();
+        bonus = 100;
+        //a flag serve de sinal para quando as 3 palavras forem arrastadas corretamente
+        flag = 0;
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        // Replace the contents of the container with the new fragment
+        FragmentEscolhaCenario fragmentEscolhaCenario = new FragmentEscolhaCenario();
+        ft.replace(R.id.your_placeholder, fragmentEscolhaCenario);
+        ft.commit();
+    }
+
+
     private void findViewsIds() {
         drag1 = (TextView)findViewById(R.id.drag1);
         drag2 = (TextView)findViewById(R.id.drag2);
@@ -163,6 +192,18 @@ public class Nivel3 extends AppCompatActivity implements FragmentEscolhaCenario.
         mao2 = (ImageView) findViewById(R.id.mao2);
         mao3 = (ImageView) findViewById(R.id.mao3);
         roundCorners = new RoundCorners(Nivel3.this, getResources());
+        home = (Button)findViewById(R.id.fase3Home);
+
+        //início dos drags
+        drag1.setOnTouchListener(new ChoiceTouchListener());
+        drag2.setOnTouchListener(new ChoiceTouchListener());
+        drag3.setOnTouchListener(new ChoiceTouchListener());
+
+        //início dos drops
+        drop1.setOnDragListener(new ChoiceDragListener());
+        drop2.setOnDragListener(new ChoiceDragListener());
+        drop3.setOnDragListener(new ChoiceDragListener());
+
     }
 
     /**
@@ -179,7 +220,6 @@ public class Nivel3 extends AppCompatActivity implements FragmentEscolhaCenario.
     public void escondeFragmentEscolhaCenario(){
         FrameLayout frag = (FrameLayout)findViewById(R.id.your_placeholder);
         frag.setVisibility(View.INVISIBLE);
-        //TODO procurar como esconder o fragmento e não o layout
     }
 
     private void savePreferences(){
@@ -471,6 +511,7 @@ public class Nivel3 extends AppCompatActivity implements FragmentEscolhaCenario.
                         flag++;
                         if(flag==3){
 
+                            home.setVisibility(View.INVISIBLE);
                             mao3.clearAnimation();
                             mao3.setVisibility(View.GONE);
 
@@ -485,6 +526,7 @@ public class Nivel3 extends AppCompatActivity implements FragmentEscolhaCenario.
                                         resetViews();
                                         //incremento no array de imagens
                                         currentIndex += 3;
+                                        home.setVisibility(View.VISIBLE);
                                         proximasImagens();
                                     }
                                 }.start();

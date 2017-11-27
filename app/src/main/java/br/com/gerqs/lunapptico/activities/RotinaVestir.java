@@ -31,6 +31,7 @@ public class RotinaVestir extends AppCompatActivity implements View.OnClickListe
     private final static int ERRADO = 0, CERTO = 1, VICTORY = 2;
     private boolean prefMusic, prefSoundEffects, prefMic;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -238,6 +239,9 @@ public class RotinaVestir extends AppCompatActivity implements View.OnClickListe
      * reseta o estado dos drags e drops para o estado inicial
      */
     private void resetViews(){
+
+        flag = 0;
+
         calcaDrag.setVisibility(ImageView.VISIBLE);
         camisaDrag.setVisibility(ImageView.VISIBLE);
         sapato1Drag.setVisibility(ImageView.VISIBLE);

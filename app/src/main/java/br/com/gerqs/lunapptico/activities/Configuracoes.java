@@ -55,7 +55,6 @@ public class Configuracoes extends AppCompatActivity implements View.OnClickList
         });
     }
 
-
     public void findViewsIds(){
         Button musica = (Button) findViewById(R.id.buttonConfMusica);
         musica.setOnClickListener(this);
@@ -74,8 +73,6 @@ public class Configuracoes extends AppCompatActivity implements View.OnClickList
         Button home = (Button) findViewById(R.id.buttonConfHome);
         home.setOnClickListener(this);
     }
-
-    //TODO trocar nomes das variáveis das preferências
 
     /**
      * manipula clicks dos botões

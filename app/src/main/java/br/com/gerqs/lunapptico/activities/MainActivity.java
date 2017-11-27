@@ -16,7 +16,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private boolean prefMusic;
     private MediaPlayer bgMusic;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startBGMusic(prefMusic);
         super.onResume();
     }
-    //TODO rever padrão para MEdiaPlayer
+
     @Override
     protected void onPause() {
         if(bgMusic != null) if(bgMusic.isPlaying()) bgMusic.pause();

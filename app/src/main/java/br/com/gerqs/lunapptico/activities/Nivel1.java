@@ -1,5 +1,6 @@
 package br.com.gerqs.lunapptico.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -10,6 +11,7 @@ import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -38,7 +40,7 @@ import br.com.gerqs.lunapptico.soundManager.SoundPlayer;
 import br.com.gerqs.lunapptico.tools.RoundCorners;
 
 
-public class Nivel1 extends AppCompatActivity implements FragmentEscolhaCenario.InterfaceComunicao {
+public class Nivel1 extends AppCompatActivity implements FragmentEscolhaCenario.InterfaceComunicao, View.OnClickListener {
 
     private ImageSwitcher imageSwitcher;
     private ArrayList<String> cards1;
@@ -61,30 +63,108 @@ public class Nivel1 extends AppCompatActivity implements FragmentEscolhaCenario.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fase1);
 
-        //início das capturas
-        Button home = (Button) findViewById(R.id.fase1Home);
-        play = (Button)findViewById(R.id.playbutton);
-        imageSwitcher = (ImageSwitcher)findViewById(R.id.imageSwitcher1);
-        setaDireita = (Button) findViewById(R.id.arrowright);
-        setaEsquerda = (Button) findViewById(R.id.arrowleft);
-        textView = (TextView) findViewById(R.id.nomeDoAnimal);
-        textView.setAllCaps(true);
-        fase1Content = (ConstraintLayout) findViewById(R.id.fase1Content);
-        roundCorners = new RoundCorners(Nivel1.this, getResources());
-
         //os players de música e palavras estão inicializados no onResume()
+        findViewsIds();
 
         //preferencia do estado da música e mic e soundeffects
-        final SharedPreferences mSharedPreference = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        SharedPreferences mSharedPreference = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         prefMusic = (mSharedPreference.getBoolean("prefMusic", true));
         prefMic = (mSharedPreference.getBoolean("prefMic", true));
         prefSoundEffects = mSharedPreference.getBoolean("prefSoundEffects", true);
 
+        //iniciar uma animação global afim de evitar que crie uma instancia sempre que deixar o botão invisível
+        scale = new ScaleAnimation(1, 0.8f, 1, 0.8f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        scale.setDuration(1500);
+        scale.setRepeatCount(Animation.INFINITE);
+        in = AnimationUtils.loadAnimation(this, android.R.anim.fade_in);
+        out = AnimationUtils.loadAnimation(this, android.R.anim.fade_out);
+        animaBotoes(true);
+
         //preferencia de estado da fase (em progresso ou não)
         SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
-        //boolean nivelEmAndamento = sharedPreferences.getBoolean("nivelEmAndamento", false);
+        if(sharedPreferences.getBoolean("nivelEmAndamento", false))
+             continuarDialog();
+        else
+            restauraActivityParaEstadoInicial();
 
-        //inicializa o switcher
+        //mudança de fonte e efeito no textView que contém o nome do animal atual
+        Typeface novaFonte = Typeface.createFromAsset(getAssets(),"fonts/ComingSoon.ttf");
+        textView.setAllCaps(true);
+        textView.setTypeface(novaFonte);
+        textView.setTextSize(40);
+        textView.setTextColor(Color.BLUE);
+        textView.setShadowLayer(5, 3, 3, Color.GRAY);
+
+    }
+
+    private void continuarDialog() {
+
+                new AlertDialog.Builder(Nivel1.this)
+                .setMessage("Deseja continuar de onde parou?")
+                .setCancelable(false)
+                .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        escondeFragmentEscolhaCenario();
+                        loadPreferences();
+                        mostraUI();
+
+                        if (currentIndex < 0) currentIndex = 0;
+                        if (currentIndex > 0) mostraSetaEsquerda();
+                        if (currentIndex >= 0) {
+                            play.setVisibility(View.VISIBLE);
+                            insereImagemNoSwitcher();
+                        }
+                        String s = cards1.get(currentIndex);
+                        s = s.replaceAll(".jpeg", "");
+                        textView.setText(s);
+                        soundPlayer = new SoundPlayer(Nivel1.this);
+                        reproduz(prefMic, prefSoundEffects, s);
+
+                        dialog.cancel();
+
+                    }
+                })
+                .setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        restauraActivityParaEstadoInicial();
+                        dialog.cancel();
+                    }
+                }).show();
+    }
+
+    private void restauraActivityParaEstadoInicial(){
+
+        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("nivelEmAndamento", false);
+        editor.apply();
+
+        //Esconde o layout principal para mostrar o fragmento de escolha de cenário
+        escondeUI();
+        currentIndex = -1;
+        // Begin the transaction
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        // Replace the contents of the container with the new fragment
+        ft.replace(R.id.your_placeholder, new FragmentEscolhaCenario());
+        ft.commit();
+    }
+
+    private void findViewsIds(){
+
+        Button home = (Button) findViewById(R.id.fase1Home);
+        home.setOnClickListener(this);
+        play = (Button)findViewById(R.id.playbutton);
+        play.setOnClickListener(this);
+        setaDireita = (Button) findViewById(R.id.arrowright);
+        setaDireita.setOnClickListener(this);
+        setaEsquerda = (Button) findViewById(R.id.arrowleft);
+        setaEsquerda.setOnClickListener(this);
+        textView = (TextView) findViewById(R.id.nomeDoAnimal);
+        imageSwitcher = (ImageSwitcher)findViewById(R.id.imageSwitcher1);
+        fase1Content = (ConstraintLayout) findViewById(R.id.fase1Content);
+        roundCorners = new RoundCorners(Nivel1.this, getResources());
         imageSwitcher.setFactory(new ViewSwitcher.ViewFactory() {
             public View makeView() {
                 // Create a new ImageView and set it's properties
@@ -97,60 +177,53 @@ public class Nivel1 extends AppCompatActivity implements FragmentEscolhaCenario.
             }
         });
 
-        //iniciar uma animação global afim de evitar que fique uma instancia sempre que deixar o botão invisível
-        scale = new ScaleAnimation(1, 0.8f, 1, 0.8f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        scale.setDuration(1500);
-        scale.setRepeatCount(Animation.INFINITE);
-        in = AnimationUtils.loadAnimation(this, android.R.anim.fade_in);
-        out = AnimationUtils.loadAnimation(this, android.R.anim.fade_out);
-        animaBotoes(true);
+    }
 
-        if (sharedPreferences.getBoolean("nivelEmAndamento", false)) {
-            escondeFragmentEscolhaCenario();
-            loadPreferences();
-            mostraUI();
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.fase1Home:
 
-            if(currentIndex < 0) currentIndex = 0;
-            if(currentIndex > 0) mostraSetaEsquerda();
-            if(currentIndex >= 0){
-                play.setVisibility(View.VISIBLE);
-                insereImagemNoSwitcher();
-            }
-            String s = cards1.get(currentIndex);
-            s = s.replaceAll(".jpeg", "");
-            textView.setText(s);
-            soundPlayer = new SoundPlayer(Nivel1.this);
-            reproduz(prefMic, prefSoundEffects, s);
-        }else {
-           //Esconde o layout principal para mostrar o fragmento de escolha de cenário
-            escondeUI();
-            currentIndex = -1;
-            // Begin the transaction
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            // Replace the contents of the container with the new fragment
-            ft.replace(R.id.your_placeholder, new FragmentEscolhaCenario());
-            ft.commit();
-        }
-
-        //mudança de fonte e efeito no textView que contém o nome do animal atual
-        Typeface novaFonte = Typeface.createFromAsset(getAssets(),"fonts/ComingSoon.ttf");
-        textView.setTypeface(novaFonte);
-        textView.setTextSize(40);
-        textView.setTextColor(Color.BLUE);
-        textView.setShadowLayer(5, 3, 3, Color.GRAY);
-
-        home.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
                 savePreferences();
                 Intent intent =  new Intent(Nivel1.this, AprenderPalavras.class);
                 startActivity(intent);
-            }
-        });
 
-        setaDireita.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                break;
+            case R.id.playbutton:
+
+                String s = cards1.get(currentIndex);
+                s = s.replaceAll(".jpeg", "");
+                reproduz(true, true, s);
+
+                break;
+            case R.id.arrowleft:
+
+                if(currentIndex > 0){
+                    currentIndex--;
+
+                    //esconde temporariamente as setas para evitar que o usuário passe pelas imagens rapidamente
+                    escondeSetas();
+                    new CountDownTimer(1000, 1000) {
+                        public void onTick(long millisUntilFinished) {}
+                        public void onFinish() {
+                            mostraSetas();
+                            if(currentIndex == 0) escondeSetaEsquerda();
+                        }
+                    }.start();
+
+                    //tocar nome da foto
+                    if(currentIndex < count) {
+                        s = cards1.get(currentIndex);
+                        s = s.replaceAll(".jpeg", "");
+                        textView.setText(s);
+                        reproduz(prefMic, prefSoundEffects, s);
+                    }
+                    insereImagemNoSwitcher();
+                }
+
+                break;
+            case R.id.arrowright:
+
                 //o usuário pode sair da activity a qualquer momento, e, quando voltar, a seta esquerda estará invisível (definido no xml)
                 if (currentIndex >= 0) mostraSetaEsquerda();
 
@@ -184,10 +257,10 @@ public class Nivel1 extends AppCompatActivity implements FragmentEscolhaCenario.
 
                 //tocar nome no TextView
                 if(currentIndex < count){
-                    String s = cards1.get(currentIndex);
+                    s = cards1.get(currentIndex);
                     s = s.replaceAll(".jpeg", "");
                     textView.setText(s);
-                   reproduz(prefMic, prefSoundEffects, s);
+                    reproduz(prefMic, prefSoundEffects, s);
                 }
 
                 //  Checa se o index está no máximo do array
@@ -197,51 +270,25 @@ public class Nivel1 extends AppCompatActivity implements FragmentEscolhaCenario.
                         mpBackgroundMusic = null;
                     }
                     //se terminou a activity, reseta as preferências
+                    //TODO alguma mensangem quando a activity termina seria lecal
                     resetPreferences();
-                    Intent intent = new Intent(Nivel1.this, AprenderPalavras.class);
+
+                    //Destrava o nível 2
+                    SharedPreferences mSharedPreference = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                    SharedPreferences.Editor editor = mSharedPreference.edit();
+                    editor.putBoolean("destravaNivel2", true);
+                    editor.apply();
+
+                    //Volta para a tela de escolha de nível
+                    intent = new Intent(Nivel1.this, AprenderPalavras.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                 }else
                     insereImagemNoSwitcher();
-            }
-        });
 
-        setaEsquerda.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(currentIndex > 0){
-                    currentIndex--;
+                break;
+        }
 
-                    //esconde temporariamente as setas para evitar que o usuário passe pelas imagens rapidamente
-                    escondeSetas();
-                    new CountDownTimer(1000, 1000) {
-                        public void onTick(long millisUntilFinished) {}
-                        public void onFinish() {
-                            mostraSetas();
-                            if(currentIndex == 0) escondeSetaEsquerda();
-                        }
-                    }.start();
-
-                    //tocar nome da foto
-                    if(currentIndex < count) {
-                        String s = cards1.get(currentIndex);
-                        s = s.replaceAll(".jpeg", "");
-                        textView.setText(s);
-                        reproduz(prefMic, prefSoundEffects, s);
-                    }
-                    insereImagemNoSwitcher();
-                }
-            }
-        });
-
-        play.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String s = cards1.get(currentIndex);
-                s = s.replaceAll(".jpeg", "");
-                reproduz(true, true, s);
-            }
-        });
     }
 
     /**
@@ -467,5 +514,6 @@ public class Nivel1 extends AppCompatActivity implements FragmentEscolhaCenario.
         soundPlayer.release();
         super.onDestroy();
     }
+
 
 }

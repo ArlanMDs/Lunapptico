@@ -57,6 +57,7 @@
             android:layout_margin="5dp"
             android:layout_marginTop="8dp"
             android:background="@drawable/retanglebutton"
+            android:enabled="false"
             android:padding="5dp"
             android:text="Nível 2"
             app:layout_constraintBottom_toBottomOf="parent"

@@ -74,7 +74,7 @@ public class Rotinas extends AppCompatActivity implements View.OnClickListener{
         startBGMusic(prefMusic);
         super.onResume();
     }
-    //TODO rever padrão para MEdiaPlayer
+
     @Override
     protected void onPause() {
         if(BGMusic != null) if(BGMusic.isPlaying()) BGMusic.pause();

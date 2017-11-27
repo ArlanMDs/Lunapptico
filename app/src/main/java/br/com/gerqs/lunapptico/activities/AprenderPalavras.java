@@ -15,7 +15,7 @@ import br.com.gerqs.lunapptico.R;
 public  class AprenderPalavras extends AppCompatActivity implements View.OnClickListener {
     private MediaPlayer BGMusic;
     private boolean prefMusic;
-
+    private Button nivel2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,12 +28,14 @@ public  class AprenderPalavras extends AppCompatActivity implements View.OnClick
         final SharedPreferences mSharedPreference = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         prefMusic = (mSharedPreference.getBoolean("prefMusic", true));
 
+        //checa se o nível 2 foi destravado
+        nivel2.setEnabled(mSharedPreference.getBoolean("destravaNivel2", false));
     }
 
     private void findViewsIds(){
         Button nivel1 = (Button) findViewById(R.id.buttonMainNivel1);
         nivel1.setOnClickListener(this);
-        Button nivel2 = (Button) findViewById(R.id.buttonMainNivel2);
+        nivel2 = (Button) findViewById(R.id.buttonMainNivel2);
         nivel2.setOnClickListener(this);
         Button nivel3 = (Button) findViewById(R.id.buttonMainNivel3);
         nivel3.setOnClickListener(this);
@@ -97,7 +99,6 @@ public  class AprenderPalavras extends AppCompatActivity implements View.OnClick
          startBGMusic(prefMusic);
          super.onResume();
     }
-    //TODO rever padrão para MEdiaPlayer
     @Override
     protected void onPause() {
         if(BGMusic != null) if(BGMusic.isPlaying()) BGMusic.pause();
